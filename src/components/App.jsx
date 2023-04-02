@@ -2,86 +2,79 @@ import Searchbar from './searchbar/Searchbar';
 import Loader from './loader/Loader';
 import ImageGallery from './imageGallery/ImageGallery';
 import Button from './button/Button';
-import { useEffect, useState } from 'react';
+// eslint-disable-next-line no-unused-vars
+import { useEffect, useState, Component } from 'react';
 import axios from 'axios';
 import Modal from './modal/Modal';
 
 // const apiKey = '33158907-0652e41e9f508e65904cd564d';
 
-export const App = () => {
+export function App() {
   const [isLoaderOn, setIsLoaderOn] = useState(false);
   const [photos, setPhotos] = useState([]);
   const [page, setPage] = useState(1);
-  const [inputValue, setImputValue] = useState('');
+  const [inputValue, setInputValue] = useState('');
   const [isModalOn, setIsModalOn] = useState(false);
   const [bigImageModal, setBigImageModal] = useState('');
 
   const getInput = async e => {
     e.preventDefault();
     setIsLoaderOn(true);
-    let inputValueHandle = e.target.elements.searchFormInput.value;
-    if (inputValueHandle === '' || inputValue === inputValueHandle) {
+    const inputValueHandler = e.target.elements.searchFormInput.value;
+    if (inputValueHandler === '' || inputValue === inputValueHandler) {
       setIsLoaderOn(false);
     } else {
-      await setPhotos([]);
+      setPhotos([]);
       const response = await axios.get(
-        `https://pixabay.com/api/?q=${inputValueHandle}&page=${page}&key=33158907-0652e41e9f508e65904cd564d&image_type=photo&orientation=horizontal&per_page=12`
+        `https://pixabay.com/api/?q=${inputValueHandler}&page=${1}&key=33158907-0652e41e9f508e65904cd564d&image_type=photo&orientation=horizontal&per_page=12`
       );
-      const newPhotos = [...response.data.hits];
-      setPhotos(newPhotos);
+      setPhotos(response.data.hits);
       setIsLoaderOn(false);
-      setImputValue(inputValueHandle);
+      setInputValue(inputValueHandler);
+      setPage(1);
     }
   };
 
-  const loadMore = async e => {
-    await setPage(prev => prev + 1);
-    await setIsLoaderOn(true);
+  const loadMore = async () => {
+    setIsLoaderOn(true);
     const response = await axios.get(
-      `https://pixabay.com/api/?q=${inputValue}&page=${page}&key=33158907-0652e41e9f508e65904cd564d&image_type=photo&orientation=horizontal&per_page=12`
+      `https://pixabay.com/api/?q=${inputValue}&page=${
+        page + 1
+      }&key=33158907-0652e41e9f508e65904cd564d&image_type=photo&orientation=horizontal&per_page=12`
     );
-    const newPhotos = [...photos, ...response.data.hits];
-    setPhotos(newPhotos);
+    setPhotos([...photos, ...response.data.hits]);
+    setPage(page + 1);
     setIsLoaderOn(false);
   };
 
-  const modalToggle = e => {
-    setIsModalOn(prev => !prev);
-    // this.setState(prev => ({ isModalOn: !prev.isModalOn }));
+  const modalToggle = () => {
+    setIsModalOn(!isModalOn);
   };
 
   const getBigImg = e => {
-    // console.log(e.target.attributes[3].value);
     setBigImageModal(e.target.attributes[3].value);
     modalToggle();
-    console.log(bigImageModal);
-  };
-
-  const handleKeyDown = e => {
-    if (e.key === 'Escape' && isModalOn) {
-      modalToggle();
-    }
   };
 
   useEffect(() => {
-    document.addEventListener('keydown', handleKeyDown);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    const handleKeyDown = e => {
+      if (e.key === 'Escape' && isModalOn) {
+        modalToggle();
+      }
+    };
 
-  useEffect(() => {
     document.addEventListener('keydown', handleKeyDown);
 
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isModalOn]);
 
   const closeModal = e => {
     if (e.target.attributes[1].value === 'overlay') {
       modalToggle();
     }
-    console.log(e.target.attributes[1].value);
   };
 
   return (
@@ -95,7 +88,7 @@ export const App = () => {
       )}
     </div>
   );
-};
+}
 
 // export class App extends Component {
 //   state = {
