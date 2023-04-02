@@ -2,7 +2,7 @@ import Searchbar from './searchbar/Searchbar';
 import Loader from './loader/Loader';
 import ImageGallery from './imageGallery/ImageGallery';
 import Button from './button/Button';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import Modal from './modal/Modal';
 
@@ -15,6 +15,8 @@ export const App = () => {
   const [inputValue, setImputValue] = useState('');
   const [isModalOn, setIsModalOn] = useState(false);
   const [bigImageModal, setBigImageModal] = useState('');
+
+  const modalRef = useRef();
 
   const getInput = async e => {
     e.preventDefault();
@@ -78,10 +80,11 @@ export const App = () => {
   }, []);
 
   const closeModal = e => {
-    if (e.target.attributes[1].value === 'overlay') {
+    if (modalRef.current.attributes[1].value === 'overlay') {
       modalToggle();
     }
-    console.log(e.target.attributes[1].value);
+    // console.log(e.target.attributes[1].value);
+    console.log(modalRef.current.attributes[1].value);
   };
 
   return (
@@ -91,7 +94,11 @@ export const App = () => {
       <ImageGallery bigPhoto={getBigImg} photos={photos}></ImageGallery>
       {photos.length > 0 && <Button onClick={loadMore}></Button>}
       {isModalOn && (
-        <Modal modalFunction={closeModal} image={bigImageModal}></Modal>
+        <Modal
+          modalRef={modalRef}
+          modalFunction={closeModal}
+          image={bigImageModal}
+        ></Modal>
       )}
     </div>
   );
