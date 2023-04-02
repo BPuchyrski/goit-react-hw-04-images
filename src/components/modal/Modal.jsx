@@ -2,14 +2,9 @@ import PropTypes from 'prop-types';
 import css from './Modal.module.css';
 // const { Component } = require('react');
 
-const Modal = ({ image, modalFunction, modalRef }) => {
+const Modal = ({ image, modalFunction }) => {
   return (
-    <div
-      ref={modalRef}
-      onClick={modalFunction}
-      className={css.Overlay}
-      name="overlay"
-    >
+    <div onClick={modalFunction} className={css.Overlay} name="overlay">
       <div className={css.Modal}>
         <img src={image} alt="ModalImage" />
       </div>
