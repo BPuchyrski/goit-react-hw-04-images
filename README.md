@@ -1,2 +1,1 @@
-
-React homework hw-04
+Image Finder (React)
